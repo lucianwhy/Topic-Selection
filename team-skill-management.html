@@ -1,0 +1,647 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>每个团队都应该做好 Skill 管理</title>
+  <style>
+    :root {
+      --bg: #f4efe6;
+      --paper: rgba(255, 251, 245, 0.92);
+      --paper-strong: #fffdfa;
+      --ink: #1f1a17;
+      --muted: #655e57;
+      --line: rgba(76, 59, 46, 0.12);
+      --accent: #b6502d;
+      --accent-soft: rgba(182, 80, 45, 0.1);
+      --teal: #24586d;
+      --teal-soft: rgba(36, 88, 109, 0.1);
+      --olive: #4d6a3b;
+      --olive-soft: rgba(77, 106, 59, 0.12);
+      --gold: #8a6922;
+      --gold-soft: rgba(138, 105, 34, 0.12);
+      --shadow: 0 20px 50px rgba(37, 28, 22, 0.08);
+      --content: 1180px;
+      --radius: 24px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      color: var(--ink);
+      font-family: "PingFang SC", "Microsoft YaHei", "Segoe UI", sans-serif;
+      line-height: 1.75;
+      background:
+        radial-gradient(circle at top right, rgba(182, 80, 45, 0.11), transparent 28%),
+        radial-gradient(circle at left 22%, rgba(36, 88, 109, 0.09), transparent 22%),
+        linear-gradient(180deg, #f7f2ea 0%, var(--bg) 48%, #efe7db 100%);
+    }
+
+    a {
+      color: var(--teal);
+      text-decoration: none;
+    }
+
+    a:hover {
+      text-decoration: underline;
+    }
+
+    .shell {
+      width: min(var(--content), calc(100% - 40px));
+      margin: 28px auto 64px;
+    }
+
+    .hero {
+      position: relative;
+      overflow: hidden;
+      background:
+        linear-gradient(135deg, rgba(182, 80, 45, 0.14), rgba(36, 88, 109, 0.08)),
+        var(--paper-strong);
+      border: 1px solid var(--line);
+      border-radius: 32px;
+      box-shadow: var(--shadow);
+      padding: 40px 40px 34px;
+    }
+
+    .hero::after {
+      content: "";
+      position: absolute;
+      inset: auto -120px -120px auto;
+      width: 320px;
+      height: 320px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(182, 80, 45, 0.12), transparent 70%);
+      pointer-events: none;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 12px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.76);
+      color: var(--accent);
+      font-size: 12px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      font-weight: 700;
+    }
+
+    .hero-grid {
+      display: grid;
+      grid-template-columns: 1.45fr 0.9fr;
+      gap: 28px;
+      margin-top: 18px;
+      align-items: end;
+    }
+
+    h1 {
+      margin: 0 0 14px;
+      font-family: "Source Han Serif SC", "Noto Serif SC", "Songti SC", serif;
+      font-size: clamp(34px, 5vw, 62px);
+      line-height: 1.08;
+      font-weight: 700;
+      max-width: 11em;
+    }
+
+    .hero p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 17px;
+      max-width: 50em;
+    }
+
+    .hero-stat-wrap {
+      display: grid;
+      gap: 12px;
+    }
+
+    .hero-stat {
+      padding: 18px 18px 16px;
+      border: 1px solid rgba(255, 255, 255, 0.72);
+      border-radius: 20px;
+      background: rgba(255, 255, 255, 0.74);
+      backdrop-filter: blur(10px);
+    }
+
+    .hero-stat strong {
+      display: block;
+      margin-bottom: 6px;
+      color: var(--accent);
+      font-size: 14px;
+      letter-spacing: 0.04em;
+    }
+
+    .hero-stat span {
+      display: block;
+      font-size: 15px;
+      color: var(--ink);
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: 280px minmax(0, 1fr);
+      gap: 24px;
+      margin-top: 24px;
+      align-items: start;
+    }
+
+    .panel,
+    .section {
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(10px);
+    }
+
+    .panel {
+      position: sticky;
+      top: 18px;
+      padding: 24px;
+    }
+
+    .panel h2,
+    .section h2 {
+      margin: 0 0 14px;
+      font-family: "Source Han Serif SC", "Noto Serif SC", "Songti SC", serif;
+      line-height: 1.2;
+    }
+
+    .panel h2 {
+      font-size: 24px;
+    }
+
+    .toc {
+      display: grid;
+      gap: 8px;
+      margin-bottom: 22px;
+    }
+
+    .toc a {
+      display: block;
+      padding: 10px 12px;
+      border-radius: 14px;
+      color: var(--ink);
+      font-size: 14px;
+      background: rgba(255, 255, 255, 0.65);
+      border: 1px solid transparent;
+    }
+
+    .toc a:hover {
+      text-decoration: none;
+      border-color: rgba(36, 88, 109, 0.16);
+      background: rgba(36, 88, 109, 0.08);
+    }
+
+    .panel-note {
+      padding: 16px;
+      border-radius: 18px;
+      background: linear-gradient(180deg, rgba(182, 80, 45, 0.08), rgba(255, 255, 255, 0.72));
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .main {
+      display: grid;
+      gap: 22px;
+    }
+
+    .section {
+      padding: 28px;
+      scroll-margin-top: 16px;
+    }
+
+    .section-head {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      align-items: baseline;
+      flex-wrap: wrap;
+      margin-bottom: 14px;
+    }
+
+    .section-head h2 {
+      font-size: 32px;
+      margin: 0;
+    }
+
+    .meta {
+      color: var(--muted);
+      font-size: 13px;
+      letter-spacing: 0.02em;
+    }
+
+    .lead {
+      font-size: 18px;
+      color: var(--ink);
+    }
+
+    .quote {
+      margin: 18px 0 0;
+      padding: 18px 18px 18px 20px;
+      border-left: 4px solid var(--accent);
+      border-radius: 18px;
+      background: rgba(182, 80, 45, 0.08);
+      font-size: 17px;
+      font-weight: 700;
+    }
+
+    .grid-3,
+    .grid-2 {
+      display: grid;
+      gap: 16px;
+      margin-top: 18px;
+    }
+
+    .grid-3 {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .grid-2 {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .card {
+      padding: 18px;
+      border-radius: 20px;
+      border: 1px solid var(--line);
+      background: rgba(255, 255, 255, 0.82);
+    }
+
+    .card h3 {
+      margin: 0 0 8px;
+      font-size: 20px;
+      line-height: 1.3;
+    }
+
+    .card p,
+    .card li,
+    .section p,
+    .section li {
+      color: #2f2926;
+    }
+
+    .tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 12px;
+    }
+
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      padding: 6px 10px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .t-accent { background: var(--accent-soft); color: var(--accent); }
+    .t-teal { background: var(--teal-soft); color: var(--teal); }
+    .t-olive { background: var(--olive-soft); color: var(--olive); }
+    .t-gold { background: var(--gold-soft); color: var(--gold); }
+
+    .story {
+      position: relative;
+      padding: 18px 18px 18px 20px;
+      border-radius: 22px;
+      border: 1px solid var(--line);
+      background: linear-gradient(180deg, rgba(255,255,255,0.9), rgba(245, 239, 230, 0.82));
+    }
+
+    .story strong {
+      display: block;
+      margin-bottom: 8px;
+      color: var(--accent);
+    }
+
+    .steps {
+      display: grid;
+      gap: 14px;
+      margin-top: 18px;
+    }
+
+    .step {
+      display: grid;
+      grid-template-columns: 52px 1fr;
+      gap: 14px;
+      align-items: start;
+      padding: 16px;
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      background: rgba(255, 255, 255, 0.82);
+    }
+
+    .step-index {
+      width: 52px;
+      height: 52px;
+      border-radius: 16px;
+      display: grid;
+      place-items: center;
+      background: linear-gradient(135deg, var(--teal), #3a7c96);
+      color: #fff;
+      font-size: 20px;
+      font-weight: 800;
+    }
+
+    .table-wrap {
+      margin-top: 16px;
+      overflow-x: auto;
+      border: 1px solid var(--line);
+      border-radius: 22px;
+      background: rgba(255, 255, 255, 0.82);
+    }
+
+    table {
+      width: 100%;
+      min-width: 860px;
+      border-collapse: collapse;
+    }
+
+    th,
+    td {
+      padding: 14px 16px;
+      text-align: left;
+      vertical-align: top;
+      border-bottom: 1px solid var(--line);
+    }
+
+    th {
+      background: rgba(36, 88, 109, 0.94);
+      color: #fff;
+      font-size: 14px;
+      letter-spacing: 0.02em;
+    }
+
+    tbody tr:nth-child(even) {
+      background: rgba(244, 239, 230, 0.46);
+    }
+
+    .source-list,
+    .deliver-list {
+      display: grid;
+      gap: 14px;
+      margin-top: 18px;
+    }
+
+    .source-item,
+    .deliver-item {
+      padding: 16px 18px;
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      background: rgba(255, 255, 255, 0.82);
+    }
+
+    .source-item strong,
+    .deliver-item strong {
+      display: block;
+      margin-bottom: 8px;
+      font-size: 16px;
+    }
+
+    .foot {
+      margin-top: 24px;
+      padding: 18px 20px;
+      border-radius: 20px;
+      background: rgba(36, 88, 109, 0.08);
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    ul {
+      margin: 10px 0 0 18px;
+      padding: 0;
+    }
+
+    li {
+      margin: 6px 0;
+    }
+
+    @media (max-width: 1040px) {
+      .hero-grid,
+      .layout,
+      .grid-3,
+      .grid-2 {
+        grid-template-columns: 1fr;
+      }
+
+      .panel {
+        position: static;
+      }
+    }
+
+    @media (max-width: 720px) {
+      .shell {
+        width: min(var(--content), calc(100% - 20px));
+        margin: 12px auto 36px;
+      }
+
+      .hero,
+      .section,
+      .panel {
+        padding: 20px;
+      }
+
+      .section-head h2 {
+        font-size: 28px;
+      }
+
+      h1 {
+        font-size: 34px;
+      }
+
+      .lead {
+        font-size: 16px;
+      }
+
+      .step {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <header class="hero">
+      <span class="eyebrow">Topic Draft + Resource Pack Blueprint</span>
+      <div class="hero-grid">
+        <div>
+          <h1>每个团队都应该做好 Skill 管理</h1>
+          <p>
+            我想写的，不是一篇泛泛聊 AI 提效的文章。
+            我真正想抓住的，是 AI 时代团队协作到底在怎么变。
+            过去很多事，靠口头带，靠老人记，靠文档堆。
+            但现在我越来越强烈地感觉到，很多高频流程、规范、检查清单、onboarding 动作，其实都可以沉淀成可复用的 Skill。
+          </p>
+          <div class="quote">
+              我现在越来越相信一件事，团队协作的新基础设施，不只是共享文档，而是共享 Skill。
+          </div>
+        </div>
+        <div class="hero-stat-wrap">
+          <div class="hero-stat">
+            <strong>选题一句话</strong>
+            <span>当团队里每个人都有 Agent，我觉得真正拉开效率差距的，不是模型，而是团队有没有把经验编译成 Skill。</span>
+          </div>
+          <div class="hero-stat">
+            <strong>文章重心</strong>
+              <span>我想从几个特别具体、特别烦、团队里天天都在发生的场景切进去，再聊 Skill 管理为什么会变成一个新的管理问题。</span>
+          </div>
+          <div class="hero-stat">
+            <strong>这个题能写什么</strong>
+              <span>这个题有人话，有场景，有判断，也有明确的落地方法，不会写成空泛的 AI 提效文章。</span>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <div class="layout">
+      <aside class="panel">
+        <h2>目录</h2>
+        <nav class="toc">
+          <a href="#angle">为什么我选这个题</a>
+          <a href="#pain">这个题对应的痛点</a>
+          <a href="#sources">我参考了哪些来源</a>
+        </nav>
+        <div class="panel-note">
+          这页我主要想回答三件事。
+          为什么我选这个题，这个题解决什么痛点，我参考了哪些来源。
+        </div>
+      </aside>
+
+      <main class="main">
+        <section class="section" id="angle">
+          <div class="section-head">
+            <h2>为什么我选这个题</h2>
+            <span class="meta">我想从团队协作和管理方式的变化切入</span>
+          </div>
+          <p class="lead">
+            我选这个题，是因为我觉得很多团队已经不是缺 AI 了，而是缺一套能让人和 Agent 一起协作的办法。
+            我自己也在带一个小团队做项目、打比赛，过程中很明显地感觉到，一些固定的团队规则和流程，只要被打包成 Skill，优势就会立刻出来。
+            这样大家调用起来更快，交接也更顺。
+            很多高频流程、规范和检查动作，继续靠人脑记，成本很高，也很容易漏。
+            所以我想写的重点，不是 Skill 这个词本身，而是团队为什么会开始需要 Skill 管理。
+          </p>
+            <div class="grid-3">
+              <article class="card">
+              <h3>我的实际感受</h3>
+                <p>我自己带队做项目的时候，最明显的感受就是，团队不是没有规则，而是规则很难稳定传下去。</p>
+              <div class="tags">
+                <span class="tag t-accent">高摩擦</span>
+                <span class="tag t-gold">不可继承</span>
+              </div>
+            </article>
+            <article class="card">
+              <h3>我看到的变化</h3>
+                <p>一些高频流程和固定口径，其实已经可以被沉成 Skill。这样团队规则就不只是文档，而是可调用的动作入口。</p>
+              <div class="tags">
+                <span class="tag t-teal">可复用</span>
+                <span class="tag t-olive">可继承</span>
+              </div>
+            </article>
+            <article class="card">
+              <h3>我为什么觉得值得写</h3>
+                <p>我关心的不是团队有没有 AI，而是团队有没有形成一套 Skill 管理办法。没有这一层，Agent 越多，协作反而可能越乱。</p>
+              <div class="tags">
+                <span class="tag t-gold">管理议题</span>
+                <span class="tag t-accent">反常识</span>
+              </div>
+            </article>
+          </div>
+        </section>
+
+        <section class="section" id="pain">
+          <div class="section-head">
+            <h2>这个题对应的痛点</h2>
+            <span class="meta">我会从几个最常见的团队现场切进去</span>
+          </div>
+          <p>
+            这个题的痛点都很具体，不抽象。
+            我现在想把痛点收成三类，新人入组、日常任务规则落地、日常任务协作。
+          </p>
+          <div class="grid-2">
+            <div class="story">
+              <strong>场景一，新人入组</strong>
+                新人第一天进项目，资料很多，规则很散，问不同的人还可能得到不同答案，接手成本很高。
+            </div>
+            <div class="story">
+              <strong>场景二，日常任务规则落地</strong>
+                很多团队其实都有接口规范、文档规范、提交规范、评审规范，但这些规则如果只停在文档里，时间一长就很难稳定执行。
+            </div>
+            <div class="story">
+              <strong>场景三，日常任务协作</strong>
+                很多重复任务本来就有固定做法，比如需求拆解、bug 归类、PR review、发布前检查，但如果没有统一入口，最后还是每个人各做各的。
+            </div>
+          </div>
+          <div class="quote">
+            我选这个题，本质上是因为这些痛点都不是新问题，但现在已经出现了一种更适合的解决办法。
+          </div>
+        </section>
+
+        <section class="section" id="sources">
+          <div class="section-head">
+            <h2>我参考了哪些来源</h2>
+            <span class="meta">每条来源我都只保留最有用的一句信息</span>
+          </div>
+          <div class="source-list">
+            <div class="source-item">
+              <strong>lucianwhy/team-skills</strong>
+              这是我自己整理的团队 Skill 仓库，里面已经在尝试把团队协作里反复出现的动作沉成 Skill。这个仓库本身也是我为什么会选这个题的直接原因。
+              <div><a href="https://github.com/lucianwhy/team-skills" target="_blank" rel="noreferrer">https://github.com/lucianwhy/team-skills</a></div>
+            </div>
+            <div class="source-item">
+              <strong>anthropics/skills</strong>
+              这是 Anthropic 官方公开的 Skill 仓库，主要是样例和参考实现。我目前没看到一个直接叫 team onboarding 的官方 Skill，但这个仓库能说明官方已经在把组织 workflow、企业流程和示例 Skill 做成公开范式。
+              <div><a href="https://github.com/anthropics/skills" target="_blank" rel="noreferrer">https://github.com/anthropics/skills</a></div>
+            </div>
+            <div class="source-item">
+              <strong>Claude Code Skills Docs</strong>
+              这份文档主要讲 Skill 的作用域、项目级 Skill 怎么放、怎么共享。它适合支撑 Skill 分层和项目内管理。
+              <div><a href="https://code.claude.com/docs/en/skills" target="_blank" rel="noreferrer">https://code.claude.com/docs/en/skills</a></div>
+            </div>
+            <div class="source-item">
+              <strong>Claude Code Memory</strong>
+              这份文档主要讲项目记忆和共享上下文，适合支撑 onboarding 和规则沉淀。
+              <div><a href="https://code.claude.com/docs/en/memory" target="_blank" rel="noreferrer">https://code.claude.com/docs/en/memory</a></div>
+            </div>
+            <div class="source-item">
+              <strong>Claude Code Plugins</strong>
+              这篇文章主要讲怎么把 workflow、subagents、MCP 和规则打包成团队共享能力，适合支撑 Skill 体系化这个角度。
+              <div><a href="https://claude.com/blog/claude-code-plugins" target="_blank" rel="noreferrer">https://claude.com/blog/claude-code-plugins</a></div>
+            </div>
+            <div class="source-item">
+              <strong>The Complete Guide to Building Skills for Claude</strong>
+              这份 Anthropic 官方 guide 更适合这个题。它不只是讲怎么写一个 Skill，还明确提到团队如何标准化 Skill、怎么测试、怎么分发，以及组织级 Skills 可以 workspace-wide 部署和集中管理。
+              <div><a href="https://resources.anthropic.com/hubfs/The-Complete-Guide-to-Building-Skill-for-Claude.pdf" target="_blank" rel="noreferrer">https://resources.anthropic.com/hubfs/The-Complete-Guide-to-Building-Skill-for-Claude.pdf</a></div>
+            </div>
+            <div class="source-item">
+              <strong>GitHub Copilot Organization Custom Instructions</strong>
+              这份文档主要讲组织级指令，能说明很多规则已经不只是写给人看，也开始写给 Agent 看。
+              <div><a href="https://docs.github.com/en/copilot/how-tos/copilot-on-github/customize-copilot/add-custom-instructions/add-organization-instructions" target="_blank" rel="noreferrer">https://docs.github.com/en/copilot/how-tos/copilot-on-github/customize-copilot/add-custom-instructions/add-organization-instructions</a></div>
+            </div>
+            <div class="source-item">
+              <strong>How we use Linear Agent at Linear</strong>
+              这篇文章主要讲团队怎么在真实工作流里使用 Agent，适合支撑重复流程沉淀成可复用工作流。
+              <div><a href="https://linear.app/blog/how-we-use-linear-agent-at-linear" target="_blank" rel="noreferrer">https://linear.app/blog/how-we-use-linear-agent-at-linear</a></div>
+            </div>
+            <div class="source-item">
+              <strong>AI Agent Onboarding: The Missing Discipline</strong>
+              这篇文章主要讲 AI agent onboarding，适合支撑新人 onboarding 正在扩展到 Agent onboarding 这个判断。
+              <div><a href="https://datahub.com/blog/ai-agent-onboarding/" target="_blank" rel="noreferrer">https://datahub.com/blog/ai-agent-onboarding/</a></div>
+            </div>
+          </div>
+        </section>
+      </main>
+    </div>
+  </div>
+</body>
+</html>

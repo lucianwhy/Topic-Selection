@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Topic Selection</title>
+  <style>
+    :root {
+      --bg: #f5efe7;
+      --paper: #fffdf9;
+      --ink: #1f1b18;
+      --muted: #6a635d;
+      --line: rgba(72, 56, 43, 0.12);
+      --accent: #a64c2d;
+      --teal: #22556b;
+      --shadow: 0 20px 48px rgba(30, 22, 17, 0.08);
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: "PingFang SC", "Microsoft YaHei", sans-serif;
+      color: var(--ink);
+      background:
+        radial-gradient(circle at top right, rgba(166, 76, 45, 0.12), transparent 26%),
+        radial-gradient(circle at left 20%, rgba(34, 85, 107, 0.1), transparent 20%),
+        var(--bg);
+      line-height: 1.7;
+    }
+    .wrap {
+      width: min(1080px, calc(100% - 32px));
+      margin: 28px auto 56px;
+    }
+    .hero,
+    .card {
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: 28px;
+      box-shadow: var(--shadow);
+    }
+    .hero {
+      padding: 36px;
+      margin-bottom: 24px;
+    }
+    .eyebrow {
+      display: inline-block;
+      margin-bottom: 14px;
+      padding: 8px 12px;
+      border-radius: 999px;
+      background: rgba(166, 76, 45, 0.1);
+      color: var(--accent);
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+    h1 {
+      margin: 0 0 14px;
+      font-size: clamp(32px, 5vw, 56px);
+      line-height: 1.08;
+      font-family: "Source Han Serif SC", "Noto Serif SC", "Songti SC", serif;
+    }
+    .hero p {
+      margin: 0;
+      max-width: 46em;
+      color: var(--muted);
+      font-size: 17px;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 18px;
+    }
+    .card {
+      padding: 22px;
+    }
+    .card h2 {
+      margin: 0 0 8px;
+      font-size: 22px;
+      line-height: 1.25;
+    }
+    .card p {
+      margin: 0 0 14px;
+      color: var(--muted);
+      font-size: 15px;
+    }
+    .status {
+      display: inline-block;
+      margin-bottom: 12px;
+      padding: 6px 10px;
+      border-radius: 999px;
+      background: rgba(34, 85, 107, 0.1);
+      color: var(--teal);
+      font-size: 12px;
+      font-weight: 700;
+    }
+    a.link {
+      color: var(--teal);
+      text-decoration: none;
+      font-weight: 700;
+    }
+    a.link:hover {
+      text-decoration: underline;
+    }
+    .note {
+      margin-top: 22px;
+      padding: 18px 20px;
+      border-radius: 20px;
+      background: rgba(34, 85, 107, 0.08);
+      color: var(--muted);
+      font-size: 14px;
+    }
+    @media (max-width: 860px) {
+      .grid { grid-template-columns: 1fr; }
+      .hero, .card { border-radius: 22px; }
+      .hero { padding: 24px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <section class="hero">
+      <span class="eyebrow">AI Topic Selection</span>
+      <h1>3 个选题的统一展示页</h1>
+      <p>
+        这个仓库用来管理这次试稿的 3 个选题。
+        目前先上线第一个已经整理完成的选题页，后面再把剩下两个选题继续补进来。
+      </p>
+      <div class="note">
+        当前已上线 1 个选题。剩余 2 个选题预留了位置，后面可以继续补成独立页面。
+      </div>
+    </section>
+
+    <section class="grid">
+      <article class="card">
+        <span class="status">已完成</span>
+        <h2>每个团队都应该做好 Skill 管理</h2>
+        <p>围绕团队协作、规则沉淀、日常任务标准化来讲 Skill 管理为什么会变成一个新的管理问题。</p>
+        <a class="link" href="./team-skill-management.html">打开选题页</a>
+      </article>
+
+      <article class="card">
+        <span class="status">待补充</span>
+        <h2>选题二</h2>
+        <p>预留位置。后面补成独立页面。</p>
+      </article>
+
+      <article class="card">
+        <span class="status">待补充</span>
+        <h2>选题三</h2>
+        <p>预留位置。后面补成独立页面。</p>
+      </article>
+    </section>
+  </div>
+</body>
+</html>
