@@ -95,6 +95,22 @@
       font-size: 18px;
       font-weight: 700;
     }
+    figure {
+      margin: 24px 0;
+    }
+    figure img {
+      width: 100%;
+      display: block;
+      border-radius: 20px;
+      border: 1px solid var(--line);
+      box-shadow: var(--shadow);
+      background: #fff;
+    }
+    figcaption {
+      margin-top: 10px;
+      color: var(--muted);
+      font-size: 14px;
+    }
     .nav {
       margin-top: 18px;
       color: var(--muted);
@@ -156,7 +172,10 @@
       <p>这个念头一冒出来，后面就很顺了。</p>
       <p>说干就干。</p>
       <p>我在本地给它配了钱包，把调用能力封成 CLI，又把整套流程打包成了一个 Skill。</p>
-      <div class="image-note">这里可插入：本地钱包配置 / Skill 打包过程截图。</div>
+      <figure>
+        <img src="./images/wallet-cli-setup.png" alt="ai-pay 本地钱包与 CLI 初始化界面" />
+        <figcaption>本地先把 <code>ai-pay</code> 这套钱包客户端跑起来。钱包、余额、模型入口、支付命令，都是从这里开始接上的。</figcaption>
+      </figure>
 
       <p>再往前一步，我让它通过 x402 这条路，真的去调用别的模型。</p>
       <p>不是概念上的如果可以。</p>
@@ -165,7 +184,10 @@
 
       <p>这次实际跑的时候，底层接的是 Blockrun 提供的模型聚合服务。</p>
       <p>它通过 x402 协议，实际调用了 <code>claude-sonnet-4.6</code>、<code>gpt-5.5</code>、<code>gemini-3.1-pro</code>，去分段完成一份以 Agent 支付为主题的横纵分析报告。</p>
-      <div class="image-note">这里可插入：ai-pay 调用成功截图、交易哈希截图、子 Agent 返回结果截图。</div>
+      <figure>
+        <img src="./images/agent-call-success.png" alt="通过 x402 成功调用外部模型并返回结果" />
+        <figcaption>这一步最关键。不是嘴上说“理论上能调”，而是真的通过 x402 发起支付请求，让外部模型把活接过去，再把结果返回来。</figcaption>
+      </figure>
 
       <p>说真的，看到请求成功那个瞬间，我是有点愣住的。</p>
       <p><strong>因为我突然发现，这件事最可怕的地方，根本不是 Agent 终于会花钱了。</strong></p>
@@ -284,7 +306,10 @@
       <p>不只是加密圈的人在做。</p>
       <p>Google 在开发者大会和支付协议这条线上，已经很明确地把 Agent 支付当成要认真做的方向了。</p>
       <p>传统支付公司像 Visa、Mastercard 这种，也明显不想错过这一波。</p>
-      <div class="image-note">这里可插入：Google、Visa、Mastercard、x402 的行业拼图截图。</div>
+      <figure>
+        <img src="./images/industry-roadmap.png" alt="Google、Visa、Mastercard 和 x402 相关页面截图" />
+        <figcaption>这张图里最重要的，不是哪家公司名字更响，而是它说明 Agent 支付已经开始从极客实验，慢慢往主流基础设施走了。</figcaption>
+      </figure>
 
       <p>这说明什么。</p>
       <p><strong>说明 Agent 支付已经不是会不会有的问题了。</strong></p>
