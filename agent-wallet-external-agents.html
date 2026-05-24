@@ -16,10 +16,6 @@
       --accent-soft: rgba(182, 80, 45, 0.1);
       --teal: #24586d;
       --teal-soft: rgba(36, 88, 109, 0.1);
-      --olive: #4d6a3b;
-      --olive-soft: rgba(77, 106, 59, 0.12);
-      --gold: #8a6922;
-      --gold-soft: rgba(138, 105, 34, 0.12);
       --shadow: 0 20px 50px rgba(37, 28, 22, 0.08);
       --content: 1180px;
       --radius: 24px;
@@ -245,53 +241,6 @@
       font-weight: 700;
     }
 
-    .grid-3,
-    .grid-2 {
-      display: grid;
-      gap: 16px;
-      margin-top: 18px;
-    }
-
-    .grid-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
-    .grid-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-
-    .card {
-      padding: 18px;
-      border-radius: 20px;
-      border: 1px solid var(--line);
-      background: rgba(255, 255, 255, 0.82);
-    }
-
-    .card h3 {
-      margin: 0 0 8px;
-      font-size: 20px;
-      line-height: 1.3;
-    }
-
-    .tags {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-      margin-top: 16px;
-    }
-
-    .tag {
-      display: inline-flex;
-      padding: 6px 10px;
-      border-radius: 999px;
-      background: var(--teal-soft);
-      color: var(--teal);
-      font-size: 12px;
-      font-weight: 700;
-    }
-
-    ul {
-      margin: 12px 0 0;
-      padding-left: 20px;
-    }
-
-    li + li { margin-top: 8px; }
-
     .resource-list {
       display: grid;
       gap: 14px;
@@ -311,6 +260,13 @@
       font-size: 17px;
     }
 
+    ul {
+      margin: 12px 0 0;
+      padding-left: 20px;
+    }
+
+    li + li { margin-top: 8px; }
+
     .footer {
       margin-top: 24px;
       padding: 22px 24px;
@@ -322,9 +278,7 @@
 
     @media (max-width: 980px) {
       .hero-grid,
-      .layout,
-      .grid-3,
-      .grid-2 {
+      .layout {
         grid-template-columns: 1fr;
       }
 
@@ -352,19 +306,19 @@
         <div>
           <h1>我给 Agent 钱包之后，最可怕的不是它会花钱</h1>
           <p>
-            这个选题不是抽象聊 Agent 支付，而是从一个真实痛点切进去：
-            Codex 在做横纵分析报告时，虽然会派子 Agent，但底下本质还是同一套模型体系，同一锅 Token 账单。
-            我真正好奇的是，既然它已经会拆任务，那能不能干脆给它一个钱包，让它通过 x402 去调用外部模型和外部 Agent，把任务正式委托出去。
+            这个选题的真正价值，不在“Agent 会不会付款”，而在一个更具体的问题上：
+            当 Codex 已经会派子 Agent，但底下本质还是同一套模型体系、同一锅 Token 账单时，
+            我们能不能干脆给它一个钱包，让它通过 x402 去调用外部模型和外部 Agent，把任务正式委托出去。
           </p>
         </div>
         <div class="hero-stat-wrap">
           <div class="hero-stat">
-            <strong>为什么值得现在写</strong>
-            <span>Google AP2、Coinbase x402、Visa、Mastercard 都在修 Agent 支付这条路，说明这条赛道正在从极客实验走向主流基础设施。</span>
+            <strong>选题判断</strong>
+            <span>从真实痛点切入，再顺手拔到 Agent 支付和 Agent 经济，不是空讲趋势。</span>
           </div>
           <div class="hero-stat">
-            <strong>文章类型</strong>
-            <span>调查实验型 + 产品体验型 + 一点点趋势判断</span>
+            <strong>为什么现在写</strong>
+            <span>Google AP2、Coinbase x402、Visa、Mastercard 都在修这条路，说明它正在走向主流。</span>
           </div>
           <div class="hero-stat">
             <strong>核心判断</strong>
@@ -379,14 +333,11 @@
         <h2>目录</h2>
         <nav class="toc">
           <a href="#why">为什么选这个题</a>
-          <a href="#angle">文章场景和切口</a>
-          <a href="#demo">实验怎么跑</a>
-          <a href="#tools">场景与工具</a>
           <a href="#sources">参考来源</a>
         </nav>
         <div class="panel-note">
-          这页不是正文初稿，而是这个选题的展示页。
-          重点是把选题价值、实验场景、工具链和可引用来源一次交代清楚。
+          这页只保留两部分：
+          为什么选这个题，以及它背后的参考来源。
         </div>
       </aside>
 
@@ -397,129 +348,46 @@
             <span class="meta">Topic Rationale</span>
           </div>
           <p class="lead">
-            因为 Agent 支付这件事，已经不是一个小圈子里的极客玩具了。
-            它正在被越来越多的巨头盯上，而且大家修的还不是同一层。
-          </p>
-          <div class="quote">
-            当 Google 在聊 AP2，Coinbase 在补 x402，传统支付巨头也开始往这条路上挤的时候，
-            这个赛道就已经不只是“会不会有”的问题了，更像是“最后会长成什么样”的问题。
-          </div>
-          <div class="grid-3">
-            <article class="card">
-              <h3>1. 巨头已经下场</h3>
-              <p>
-                Google 在开发者大会上提到 AP2，Coinbase 推 x402，Visa、Mastercard 也都在布局 Agent 支付。
-                这说明它开始从协议实验，转向基础设施竞争。
-              </p>
-            </article>
-            <article class="card">
-              <h3>2. 它天然适合 AI 时代</h3>
-              <p>
-                当 Agent 数量未来远远超过人类，机器和机器之间的交易、调用、授权、委托，很可能会变成一种新的主流经济交互模式。
-              </p>
-            </article>
-            <article class="card">
-              <h3>3. 它能落到真实场景</h3>
-              <p>
-                这不是纯概念题。它可以直接落到“主 Agent 带着钱包，把报告任务正式委托给外部模型去完成”的实验里。
-              </p>
-            </article>
-          </div>
-        </section>
-
-        <section class="section" id="angle">
-          <div class="section-head">
-            <h2>文章场景和切口</h2>
-            <span class="meta">Scene + Narrative Hook</span>
-          </div>
-          <p>
-            这篇文章最适合的切口，不是先讲协议，也不是先讲趋势。
-            最好的开头，是我在用 Codex 跑一份横纵分析报告时，突然发现它虽然会派子 Agent，但这些子 Agent 本质上还是同一套模型体系，同一锅 Token 账单。
+            因为这个题不是从抽象概念长出来的，而是从一个很具体的使用痛点里长出来的。
           </p>
           <p>
-            好奇心就是从这里冒出来的：
-            既然它已经会拆任务，那它能不能别老在自己这一套模型里打转，干脆拿着钱包，直接去调用外部模型和外部 Agent 干活？
+            我在用 Codex 跑横纵分析报告时，发现它虽然已经会派子 Agent，但这些子 Agent 本质上还是同一套模型体系。
+            这意味着，表面上看像很多 Agent 在并行工作，底下真正烧掉的其实还是同一锅 Token。
+          </p>
+          <p>
+            这一下，我的好奇心就被勾起来了。
+            既然它已经知道该怎么拆任务，知道什么任务更适合哪种脑子，那它能不能干脆拿着钱包，真的去调用外部模型、外部 Agent，把任务正式委托出去？
           </p>
           <div class="quote">
-            这篇文章真正要写的，不是“Agent 学会付款”。
-            而是“一个带钱包的主 Agent，第一次开始像项目经理一样，把任务正式委托给外部世界”。
-          </div>
-          <div class="tags">
-            <span class="tag">真实痛点</span>
-            <span class="tag">Codex 子 Agent 太吃 Token</span>
-            <span class="tag">好奇心驱动</span>
-            <span class="tag">调查实验型</span>
-            <span class="tag">顺手带科普</span>
-          </div>
-        </section>
-
-        <section class="section" id="demo">
-          <div class="section-head">
-            <h2>实验怎么跑</h2>
-            <span class="meta">Demo Blueprint</span>
-          </div>
-          <div class="grid-2">
-            <article class="card">
-              <h3>主 Agent 的任务</h3>
-              <p>
-                主 Agent 接到一份横纵分析报告任务，要拆纵向、横向、最终 HTML 三块工作。
-                以前这件事虽然能在 Codex 内部派子 Agent，但底下本质还是同一套模型体系。
-              </p>
-            </article>
-            <article class="card">
-              <h3>新实验的动作</h3>
-              <p>
-                这次给主 Agent 接上钱包，再通过 x402 和 ai-pay，让它把纵向分析、横向分析、HTML 落版正式委托给外部模型去完成。
-              </p>
-            </article>
-          </div>
-          <div class="grid-3">
-            <article class="card">
-              <h3>纵向分析</h3>
-              <p>交给更适合长叙事、铺历史脉络的模型，比如 Claude。</p>
-            </article>
-            <article class="card">
-              <h3>横向分析</h3>
-              <p>交给更擅长结构化比较和竞品判断的模型，比如 OpenAI o3。</p>
-            </article>
-            <article class="card">
-              <h3>HTML 收尾</h3>
-              <p>交给更适合长 HTML 和排版输出的模型，比如 Gemini。</p>
-            </article>
-          </div>
-          <div class="quote">
-            这个实验最有意思的地方，不是“我切了几个模型”，而是主 Agent 第一次真的拥有了对外调度能力。
-          </div>
-        </section>
-
-        <section class="section" id="tools">
-          <div class="section-head">
-            <h2>场景与工具</h2>
-            <span class="meta">Scene + Tools</span>
+            这个选题真正想讨论的，不是“Agent 会不会付款”，而是“一个带钱包的主 Agent，能不能开始像项目经理一样，拿着预算去调度外部世界”。
           </div>
           <div class="resource-list">
             <div class="resource">
-              <strong>场景 1：Codex 生成横纵分析报告</strong>
+              <strong>第一层，真实痛点足够具体</strong>
               <p>
-                先用现成的 hv-analysis workflow 跑一份报告，再观察它的子 Agent 派发方式、Token 消耗和模型同质化问题。
+                它不是未来学空谈，而是从 Codex 子 Agent 仍然吃同一套模型、同一锅 Token 这个现实问题里长出来的。
+                这让文章天然有一个很强的现场感。
               </p>
             </div>
             <div class="resource">
-              <strong>场景 2：主 Agent 接钱包</strong>
+              <strong>第二层，实验可以真的跑</strong>
               <p>
-                给主 Agent 配钱包，把原来只能“建议”的能力，升级成可以真的发起支付、真的把任务委托出去的能力。
+                这不是纸上推演。通过 ai-pay 和 x402，主 Agent 已经可以真的对外付费调用模型和 Agent。
+                也就是说，这个题是可以用真实演示、真实截图、真实支付记录撑起来的。
               </p>
             </div>
             <div class="resource">
-              <strong>场景 3：通过 x402 调外部模型</strong>
+              <strong>第三层，背后趋势足够大</strong>
               <p>
-                通过 ai-pay + x402 付费调用外部模型，分别完成纵向分析、横向分析和 HTML 收尾，形成完整的 demo 证据链。
+                当 Agent 数量未来远远超过人类，机器和机器之间的支付、委托、授权、调度，很可能会变成一种新的主流经济交互模式。
+                这让它不只是一个“工具更新”，而是一个值得往更大方向聊的选题。
               </p>
             </div>
             <div class="resource">
-              <strong>工具链</strong>
+              <strong>第四层，巨头已经在修路</strong>
               <p>
-                Codex、hv-analysis Skill、ai-pay、x402、外部大模型（如 Claude / OpenAI o3 / Gemini）、最终 HTML 报告页。
+                Google 在开发者大会上提到 AP2，Coinbase 在做 x402，传统支付巨头像 Visa、Mastercard 也都不想错过这条线。
+                这说明 Agent 支付已经开始从极客实验，往主流基础设施演进。
               </p>
             </div>
           </div>
@@ -531,7 +399,7 @@
             <span class="meta">Sources</span>
           </div>
           <p>
-            正文最后应该明确说明，这个选题不是凭空脑补，而是有真实协议、有真实公司、有真实支付基础设施在往前修。
+            这几个来源足够支撑“Agent 支付正在走向主流”这个判断，也能给正文里关于 AP2、x402 和传统支付公司入场的部分做可靠引用。
           </p>
           <ul>
             <li><a href="https://cloud.google.com/blog/products/ai-machine-learning/announcing-agents-to-payments-ap2-protocol" target="_blank" rel="noopener noreferrer">Google Cloud：AP2 协议</a></li>
@@ -540,8 +408,8 @@
             <li><a href="https://www.mastercard.com/news/press/2025/april/mastercard-unveils-agent-pay-pioneering-agentic-payments-technology-to-power-commerce-in-the-age-of-ai/" target="_blank" rel="noopener noreferrer">Mastercard Agent Pay</a></li>
           </ul>
           <div class="footer">
-            这一页的用途，是把“为什么选这个题”“准备怎么写”“会用到哪些场景和工具”“最后会引用哪些来源”一次性说明白。
-            它是选题展示页，不是正文成稿。
+            这页现在只保留“为什么选这个题”和“参考来源”。
+            其他场景、工具、实验流程说明全部删掉了。
           </div>
         </section>
       </main>
