@@ -1,0 +1,551 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>我给 Agent 钱包之后，最可怕的不是它会花钱</title>
+  <style>
+    :root {
+      --bg: #f4efe6;
+      --paper: rgba(255, 251, 245, 0.92);
+      --paper-strong: #fffdfa;
+      --ink: #1f1a17;
+      --muted: #655e57;
+      --line: rgba(76, 59, 46, 0.12);
+      --accent: #b6502d;
+      --accent-soft: rgba(182, 80, 45, 0.1);
+      --teal: #24586d;
+      --teal-soft: rgba(36, 88, 109, 0.1);
+      --olive: #4d6a3b;
+      --olive-soft: rgba(77, 106, 59, 0.12);
+      --gold: #8a6922;
+      --gold-soft: rgba(138, 105, 34, 0.12);
+      --shadow: 0 20px 50px rgba(37, 28, 22, 0.08);
+      --content: 1180px;
+      --radius: 24px;
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      color: var(--ink);
+      font-family: "PingFang SC", "Microsoft YaHei", "Segoe UI", sans-serif;
+      line-height: 1.75;
+      background:
+        radial-gradient(circle at top right, rgba(182, 80, 45, 0.11), transparent 28%),
+        radial-gradient(circle at left 22%, rgba(36, 88, 109, 0.09), transparent 22%),
+        linear-gradient(180deg, #f7f2ea 0%, var(--bg) 48%, #efe7db 100%);
+    }
+
+    a {
+      color: var(--teal);
+      text-decoration: none;
+    }
+
+    a:hover { text-decoration: underline; }
+
+    .shell {
+      width: min(var(--content), calc(100% - 40px));
+      margin: 28px auto 64px;
+    }
+
+    .hero {
+      position: relative;
+      overflow: hidden;
+      background:
+        linear-gradient(135deg, rgba(182, 80, 45, 0.14), rgba(36, 88, 109, 0.08)),
+        var(--paper-strong);
+      border: 1px solid var(--line);
+      border-radius: 32px;
+      box-shadow: var(--shadow);
+      padding: 40px 40px 34px;
+    }
+
+    .hero::after {
+      content: "";
+      position: absolute;
+      inset: auto -120px -120px auto;
+      width: 320px;
+      height: 320px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(182, 80, 45, 0.12), transparent 70%);
+      pointer-events: none;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 12px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.76);
+      color: var(--accent);
+      font-size: 12px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      font-weight: 700;
+    }
+
+    .hero-grid {
+      display: grid;
+      grid-template-columns: 1.45fr 0.9fr;
+      gap: 28px;
+      margin-top: 18px;
+      align-items: end;
+    }
+
+    h1 {
+      margin: 0 0 14px;
+      font-family: "Source Han Serif SC", "Noto Serif SC", "Songti SC", serif;
+      font-size: clamp(34px, 5vw, 62px);
+      line-height: 1.08;
+      font-weight: 700;
+      max-width: 11em;
+    }
+
+    .hero p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 17px;
+      max-width: 50em;
+    }
+
+    .hero-stat-wrap {
+      display: grid;
+      gap: 12px;
+    }
+
+    .hero-stat {
+      padding: 18px 18px 16px;
+      border: 1px solid rgba(255, 255, 255, 0.72);
+      border-radius: 20px;
+      background: rgba(255, 255, 255, 0.74);
+      backdrop-filter: blur(10px);
+    }
+
+    .hero-stat strong {
+      display: block;
+      margin-bottom: 6px;
+      color: var(--accent);
+      font-size: 14px;
+      letter-spacing: 0.04em;
+    }
+
+    .hero-stat span {
+      display: block;
+      font-size: 15px;
+      color: var(--ink);
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: 280px minmax(0, 1fr);
+      gap: 24px;
+      margin-top: 24px;
+      align-items: start;
+    }
+
+    .panel,
+    .section {
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(10px);
+    }
+
+    .panel {
+      position: sticky;
+      top: 18px;
+      padding: 24px;
+    }
+
+    .panel h2,
+    .section h2 {
+      margin: 0 0 14px;
+      font-family: "Source Han Serif SC", "Noto Serif SC", "Songti SC", serif;
+      line-height: 1.2;
+    }
+
+    .panel h2 { font-size: 24px; }
+
+    .toc {
+      display: grid;
+      gap: 8px;
+      margin-bottom: 22px;
+    }
+
+    .toc a {
+      display: block;
+      padding: 10px 12px;
+      border-radius: 14px;
+      color: var(--ink);
+      font-size: 14px;
+      background: rgba(255, 255, 255, 0.65);
+      border: 1px solid transparent;
+    }
+
+    .toc a:hover {
+      text-decoration: none;
+      border-color: rgba(36, 88, 109, 0.16);
+      background: rgba(36, 88, 109, 0.08);
+    }
+
+    .panel-note {
+      padding: 16px;
+      border-radius: 18px;
+      background: linear-gradient(180deg, rgba(182, 80, 45, 0.08), rgba(255, 255, 255, 0.72));
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .main {
+      display: grid;
+      gap: 22px;
+    }
+
+    .section {
+      padding: 28px;
+      scroll-margin-top: 16px;
+    }
+
+    .section-head {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      align-items: baseline;
+      flex-wrap: wrap;
+      margin-bottom: 14px;
+    }
+
+    .section-head h2 {
+      font-size: 32px;
+      margin: 0;
+    }
+
+    .meta {
+      color: var(--muted);
+      font-size: 13px;
+      letter-spacing: 0.02em;
+    }
+
+    .lead {
+      font-size: 18px;
+      color: var(--ink);
+    }
+
+    .quote {
+      margin: 18px 0 0;
+      padding: 18px 18px 18px 20px;
+      border-left: 4px solid var(--accent);
+      border-radius: 18px;
+      background: rgba(182, 80, 45, 0.08);
+      font-size: 17px;
+      font-weight: 700;
+    }
+
+    .grid-3,
+    .grid-2 {
+      display: grid;
+      gap: 16px;
+      margin-top: 18px;
+    }
+
+    .grid-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .grid-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+
+    .card {
+      padding: 18px;
+      border-radius: 20px;
+      border: 1px solid var(--line);
+      background: rgba(255, 255, 255, 0.82);
+    }
+
+    .card h3 {
+      margin: 0 0 8px;
+      font-size: 20px;
+      line-height: 1.3;
+    }
+
+    .tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 16px;
+    }
+
+    .tag {
+      display: inline-flex;
+      padding: 6px 10px;
+      border-radius: 999px;
+      background: var(--teal-soft);
+      color: var(--teal);
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    ul {
+      margin: 12px 0 0;
+      padding-left: 20px;
+    }
+
+    li + li { margin-top: 8px; }
+
+    .resource-list {
+      display: grid;
+      gap: 14px;
+      margin-top: 18px;
+    }
+
+    .resource {
+      padding: 18px;
+      border-radius: 18px;
+      border: 1px solid var(--line);
+      background: rgba(255, 255, 255, 0.86);
+    }
+
+    .resource strong {
+      display: block;
+      margin-bottom: 8px;
+      font-size: 17px;
+    }
+
+    .footer {
+      margin-top: 24px;
+      padding: 22px 24px;
+      border-radius: 20px;
+      background: rgba(36, 88, 109, 0.08);
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    @media (max-width: 980px) {
+      .hero-grid,
+      .layout,
+      .grid-3,
+      .grid-2 {
+        grid-template-columns: 1fr;
+      }
+
+      .panel {
+        position: static;
+      }
+
+      .shell {
+        width: min(var(--content), calc(100% - 24px));
+      }
+
+      .hero,
+      .section,
+      .panel {
+        padding: 24px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <section class="hero">
+      <span class="eyebrow">AI Topic Selection · 选题二</span>
+      <div class="hero-grid">
+        <div>
+          <h1>我给 Agent 钱包之后，最可怕的不是它会花钱</h1>
+          <p>
+            这个选题不是抽象聊 Agent 支付，而是从一个真实痛点切进去：
+            Codex 在做横纵分析报告时，虽然会派子 Agent，但底下本质还是同一套模型体系，同一锅 Token 账单。
+            我真正好奇的是，既然它已经会拆任务，那能不能干脆给它一个钱包，让它通过 x402 去调用外部模型和外部 Agent，把任务正式委托出去。
+          </p>
+        </div>
+        <div class="hero-stat-wrap">
+          <div class="hero-stat">
+            <strong>为什么值得现在写</strong>
+            <span>Google AP2、Coinbase x402、Visa、Mastercard 都在修 Agent 支付这条路，说明这条赛道正在从极客实验走向主流基础设施。</span>
+          </div>
+          <div class="hero-stat">
+            <strong>文章类型</strong>
+            <span>调查实验型 + 产品体验型 + 一点点趋势判断</span>
+          </div>
+          <div class="hero-stat">
+            <strong>核心判断</strong>
+            <span>钱包改变的不是支付动作，而是 Agent 第一次开始拥有对外调度能力。</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div class="layout">
+      <aside class="panel">
+        <h2>目录</h2>
+        <nav class="toc">
+          <a href="#why">为什么选这个题</a>
+          <a href="#angle">文章场景和切口</a>
+          <a href="#demo">实验怎么跑</a>
+          <a href="#tools">场景与工具</a>
+          <a href="#sources">参考来源</a>
+        </nav>
+        <div class="panel-note">
+          这页不是正文初稿，而是这个选题的展示页。
+          重点是把选题价值、实验场景、工具链和可引用来源一次交代清楚。
+        </div>
+      </aside>
+
+      <main class="main">
+        <section class="section" id="why">
+          <div class="section-head">
+            <h2>为什么选这个题</h2>
+            <span class="meta">Topic Rationale</span>
+          </div>
+          <p class="lead">
+            因为 Agent 支付这件事，已经不是一个小圈子里的极客玩具了。
+            它正在被越来越多的巨头盯上，而且大家修的还不是同一层。
+          </p>
+          <div class="quote">
+            当 Google 在聊 AP2，Coinbase 在补 x402，传统支付巨头也开始往这条路上挤的时候，
+            这个赛道就已经不只是“会不会有”的问题了，更像是“最后会长成什么样”的问题。
+          </div>
+          <div class="grid-3">
+            <article class="card">
+              <h3>1. 巨头已经下场</h3>
+              <p>
+                Google 在开发者大会上提到 AP2，Coinbase 推 x402，Visa、Mastercard 也都在布局 Agent 支付。
+                这说明它开始从协议实验，转向基础设施竞争。
+              </p>
+            </article>
+            <article class="card">
+              <h3>2. 它天然适合 AI 时代</h3>
+              <p>
+                当 Agent 数量未来远远超过人类，机器和机器之间的交易、调用、授权、委托，很可能会变成一种新的主流经济交互模式。
+              </p>
+            </article>
+            <article class="card">
+              <h3>3. 它能落到真实场景</h3>
+              <p>
+                这不是纯概念题。它可以直接落到“主 Agent 带着钱包，把报告任务正式委托给外部模型去完成”的实验里。
+              </p>
+            </article>
+          </div>
+        </section>
+
+        <section class="section" id="angle">
+          <div class="section-head">
+            <h2>文章场景和切口</h2>
+            <span class="meta">Scene + Narrative Hook</span>
+          </div>
+          <p>
+            这篇文章最适合的切口，不是先讲协议，也不是先讲趋势。
+            最好的开头，是我在用 Codex 跑一份横纵分析报告时，突然发现它虽然会派子 Agent，但这些子 Agent 本质上还是同一套模型体系，同一锅 Token 账单。
+          </p>
+          <p>
+            好奇心就是从这里冒出来的：
+            既然它已经会拆任务，那它能不能别老在自己这一套模型里打转，干脆拿着钱包，直接去调用外部模型和外部 Agent 干活？
+          </p>
+          <div class="quote">
+            这篇文章真正要写的，不是“Agent 学会付款”。
+            而是“一个带钱包的主 Agent，第一次开始像项目经理一样，把任务正式委托给外部世界”。
+          </div>
+          <div class="tags">
+            <span class="tag">真实痛点</span>
+            <span class="tag">Codex 子 Agent 太吃 Token</span>
+            <span class="tag">好奇心驱动</span>
+            <span class="tag">调查实验型</span>
+            <span class="tag">顺手带科普</span>
+          </div>
+        </section>
+
+        <section class="section" id="demo">
+          <div class="section-head">
+            <h2>实验怎么跑</h2>
+            <span class="meta">Demo Blueprint</span>
+          </div>
+          <div class="grid-2">
+            <article class="card">
+              <h3>主 Agent 的任务</h3>
+              <p>
+                主 Agent 接到一份横纵分析报告任务，要拆纵向、横向、最终 HTML 三块工作。
+                以前这件事虽然能在 Codex 内部派子 Agent，但底下本质还是同一套模型体系。
+              </p>
+            </article>
+            <article class="card">
+              <h3>新实验的动作</h3>
+              <p>
+                这次给主 Agent 接上钱包，再通过 x402 和 ai-pay，让它把纵向分析、横向分析、HTML 落版正式委托给外部模型去完成。
+              </p>
+            </article>
+          </div>
+          <div class="grid-3">
+            <article class="card">
+              <h3>纵向分析</h3>
+              <p>交给更适合长叙事、铺历史脉络的模型，比如 Claude。</p>
+            </article>
+            <article class="card">
+              <h3>横向分析</h3>
+              <p>交给更擅长结构化比较和竞品判断的模型，比如 OpenAI o3。</p>
+            </article>
+            <article class="card">
+              <h3>HTML 收尾</h3>
+              <p>交给更适合长 HTML 和排版输出的模型，比如 Gemini。</p>
+            </article>
+          </div>
+          <div class="quote">
+            这个实验最有意思的地方，不是“我切了几个模型”，而是主 Agent 第一次真的拥有了对外调度能力。
+          </div>
+        </section>
+
+        <section class="section" id="tools">
+          <div class="section-head">
+            <h2>场景与工具</h2>
+            <span class="meta">Scene + Tools</span>
+          </div>
+          <div class="resource-list">
+            <div class="resource">
+              <strong>场景 1：Codex 生成横纵分析报告</strong>
+              <p>
+                先用现成的 hv-analysis workflow 跑一份报告，再观察它的子 Agent 派发方式、Token 消耗和模型同质化问题。
+              </p>
+            </div>
+            <div class="resource">
+              <strong>场景 2：主 Agent 接钱包</strong>
+              <p>
+                给主 Agent 配钱包，把原来只能“建议”的能力，升级成可以真的发起支付、真的把任务委托出去的能力。
+              </p>
+            </div>
+            <div class="resource">
+              <strong>场景 3：通过 x402 调外部模型</strong>
+              <p>
+                通过 ai-pay + x402 付费调用外部模型，分别完成纵向分析、横向分析和 HTML 收尾，形成完整的 demo 证据链。
+              </p>
+            </div>
+            <div class="resource">
+              <strong>工具链</strong>
+              <p>
+                Codex、hv-analysis Skill、ai-pay、x402、外部大模型（如 Claude / OpenAI o3 / Gemini）、最终 HTML 报告页。
+              </p>
+            </div>
+          </div>
+        </section>
+
+        <section class="section" id="sources">
+          <div class="section-head">
+            <h2>参考来源</h2>
+            <span class="meta">Sources</span>
+          </div>
+          <p>
+            正文最后应该明确说明，这个选题不是凭空脑补，而是有真实协议、有真实公司、有真实支付基础设施在往前修。
+          </p>
+          <ul>
+            <li><a href="https://cloud.google.com/blog/products/ai-machine-learning/announcing-agents-to-payments-ap2-protocol" target="_blank" rel="noopener noreferrer">Google Cloud：AP2 协议</a></li>
+            <li><a href="https://docs.cdp.coinbase.com/x402/welcome" target="_blank" rel="noopener noreferrer">Coinbase x402 官方文档</a></li>
+            <li><a href="https://corporate.visa.com/en/products/intelligent-commerce.html" target="_blank" rel="noopener noreferrer">Visa Intelligent Commerce</a></li>
+            <li><a href="https://www.mastercard.com/news/press/2025/april/mastercard-unveils-agent-pay-pioneering-agentic-payments-technology-to-power-commerce-in-the-age-of-ai/" target="_blank" rel="noopener noreferrer">Mastercard Agent Pay</a></li>
+          </ul>
+          <div class="footer">
+            这一页的用途，是把“为什么选这个题”“准备怎么写”“会用到哪些场景和工具”“最后会引用哪些来源”一次性说明白。
+            它是选题展示页，不是正文成稿。
+          </div>
+        </section>
+      </main>
+    </div>
+  </div>
+</body>
+</html>
