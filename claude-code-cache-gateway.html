@@ -1,0 +1,564 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>中转站会偷走你的缓存命中吗？我在 Claude Code 成本实验里看到的真相</title>
+  <style>
+    :root {
+      --bg: #f4efe6;
+      --paper: rgba(255, 251, 245, 0.92);
+      --paper-strong: #fffdfa;
+      --ink: #1f1a17;
+      --muted: #655e57;
+      --line: rgba(76, 59, 46, 0.12);
+      --accent: #b6502d;
+      --accent-soft: rgba(182, 80, 45, 0.1);
+      --teal: #24586d;
+      --teal-soft: rgba(36, 88, 109, 0.1);
+      --gold: #8a6922;
+      --gold-soft: rgba(138, 105, 34, 0.12);
+      --shadow: 0 20px 50px rgba(37, 28, 22, 0.08);
+      --content: 1180px;
+      --radius: 24px;
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      color: var(--ink);
+      font-family: "PingFang SC", "Microsoft YaHei", "Segoe UI", sans-serif;
+      line-height: 1.75;
+      background:
+        radial-gradient(circle at top right, rgba(182, 80, 45, 0.11), transparent 28%),
+        radial-gradient(circle at left 22%, rgba(36, 88, 109, 0.09), transparent 22%),
+        linear-gradient(180deg, #f7f2ea 0%, var(--bg) 48%, #efe7db 100%);
+    }
+
+    a {
+      color: var(--teal);
+      text-decoration: none;
+    }
+
+    a:hover { text-decoration: underline; }
+
+    .shell {
+      width: min(var(--content), calc(100% - 40px));
+      margin: 28px auto 64px;
+    }
+
+    .hero {
+      position: relative;
+      overflow: hidden;
+      background:
+        linear-gradient(135deg, rgba(182, 80, 45, 0.14), rgba(36, 88, 109, 0.08)),
+        var(--paper-strong);
+      border: 1px solid var(--line);
+      border-radius: 32px;
+      box-shadow: var(--shadow);
+      padding: 40px 40px 34px;
+    }
+
+    .hero::after {
+      content: "";
+      position: absolute;
+      inset: auto -120px -120px auto;
+      width: 320px;
+      height: 320px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(182, 80, 45, 0.12), transparent 70%);
+      pointer-events: none;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 12px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.76);
+      color: var(--accent);
+      font-size: 12px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      font-weight: 700;
+    }
+
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      margin-left: 12px;
+      padding: 8px 12px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.76);
+      color: var(--teal);
+      font-size: 12px;
+      letter-spacing: 0.04em;
+      font-weight: 700;
+    }
+
+    .back-link:hover {
+      text-decoration: none;
+      background: rgba(36, 88, 109, 0.12);
+    }
+
+    .hero-grid {
+      display: grid;
+      grid-template-columns: 1.45fr 0.9fr;
+      gap: 28px;
+      margin-top: 18px;
+      align-items: end;
+    }
+
+    h1 {
+      margin: 0 0 14px;
+      font-family: "Source Han Serif SC", "Noto Serif SC", "Songti SC", serif;
+      font-size: clamp(34px, 5vw, 60px);
+      line-height: 1.08;
+      font-weight: 700;
+      max-width: 12em;
+    }
+
+    .hero p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 17px;
+      max-width: 50em;
+    }
+
+    .hero-stat-wrap {
+      display: grid;
+      gap: 12px;
+    }
+
+    .hero-stat {
+      padding: 18px 18px 16px;
+      border: 1px solid rgba(255, 255, 255, 0.72);
+      border-radius: 20px;
+      background: rgba(255, 255, 255, 0.74);
+      backdrop-filter: blur(10px);
+    }
+
+    .hero-stat strong {
+      display: block;
+      margin-bottom: 6px;
+      color: var(--accent);
+      font-size: 14px;
+      letter-spacing: 0.04em;
+    }
+
+    .hero-stat span {
+      display: block;
+      font-size: 15px;
+      color: var(--ink);
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: 280px minmax(0, 1fr);
+      gap: 24px;
+      margin-top: 24px;
+      align-items: start;
+    }
+
+    .panel,
+    .section {
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(10px);
+    }
+
+    .panel {
+      position: sticky;
+      top: 18px;
+      padding: 24px;
+    }
+
+    .panel h2,
+    .section h2 {
+      margin: 0 0 14px;
+      font-family: "Source Han Serif SC", "Noto Serif SC", "Songti SC", serif;
+      line-height: 1.2;
+    }
+
+    .panel h2 { font-size: 24px; }
+
+    .toc {
+      display: grid;
+      gap: 8px;
+      margin-bottom: 22px;
+    }
+
+    .toc a {
+      display: block;
+      padding: 10px 12px;
+      border-radius: 14px;
+      color: var(--ink);
+      font-size: 14px;
+      background: rgba(255, 255, 255, 0.65);
+      border: 1px solid transparent;
+    }
+
+    .toc a:hover {
+      text-decoration: none;
+      border-color: rgba(36, 88, 109, 0.16);
+      background: rgba(36, 88, 109, 0.08);
+    }
+
+    .panel-note {
+      padding: 16px;
+      border-radius: 18px;
+      background: linear-gradient(180deg, rgba(182, 80, 45, 0.08), rgba(255, 255, 255, 0.72));
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .main {
+      display: grid;
+      gap: 22px;
+    }
+
+    .section {
+      padding: 28px;
+      scroll-margin-top: 16px;
+    }
+
+    .section-head {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      align-items: baseline;
+      flex-wrap: wrap;
+      margin-bottom: 14px;
+    }
+
+    .section-head h2 {
+      font-size: 32px;
+      margin: 0;
+    }
+
+    .meta {
+      color: var(--muted);
+      font-size: 13px;
+      letter-spacing: 0.02em;
+    }
+
+    .lead {
+      font-size: 18px;
+      color: var(--ink);
+    }
+
+    .quote {
+      margin: 18px 0 0;
+      padding: 18px 18px 18px 20px;
+      border-left: 4px solid var(--accent);
+      border-radius: 18px;
+      background: rgba(182, 80, 45, 0.08);
+      font-size: 17px;
+      font-weight: 700;
+    }
+
+    .grid-3,
+    .grid-2 {
+      display: grid;
+      gap: 16px;
+      margin-top: 18px;
+    }
+
+    .grid-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .grid-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+
+    .card {
+      padding: 18px;
+      border-radius: 20px;
+      border: 1px solid var(--line);
+      background: rgba(255, 255, 255, 0.82);
+    }
+
+    .card h3 {
+      margin: 0 0 8px;
+      font-size: 20px;
+      line-height: 1.3;
+    }
+
+    .tag-wrap {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 12px;
+    }
+
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      padding: 6px 10px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .t-accent { background: var(--accent-soft); color: var(--accent); }
+    .t-teal { background: var(--teal-soft); color: var(--teal); }
+    .t-gold { background: var(--gold-soft); color: var(--gold); }
+
+    .story {
+      padding: 18px 18px 18px 20px;
+      border-radius: 22px;
+      border: 1px solid var(--line);
+      background: linear-gradient(180deg, rgba(255,255,255,0.9), rgba(245, 239, 230, 0.82));
+    }
+
+    .story strong {
+      display: block;
+      margin-bottom: 8px;
+      color: var(--accent);
+    }
+
+    .source-list {
+      display: grid;
+      gap: 14px;
+      margin-top: 18px;
+    }
+
+    .source-item {
+      padding: 16px 18px;
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      background: rgba(255, 255, 255, 0.82);
+    }
+
+    .source-item strong {
+      display: block;
+      margin-bottom: 8px;
+      font-size: 16px;
+    }
+
+    .footer {
+      margin-top: 24px;
+      padding: 18px 20px;
+      border-radius: 20px;
+      background: rgba(36, 88, 109, 0.08);
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    ul {
+      margin: 10px 0 0 18px;
+      padding: 0;
+    }
+
+    li {
+      margin: 6px 0;
+    }
+
+    @media (max-width: 1040px) {
+      .hero-grid,
+      .layout,
+      .grid-3,
+      .grid-2 {
+        grid-template-columns: 1fr;
+      }
+
+      .panel { position: static; }
+    }
+
+    @media (max-width: 720px) {
+      .shell {
+        width: min(var(--content), calc(100% - 20px));
+        margin: 12px auto 36px;
+      }
+
+      .hero,
+      .section,
+      .panel {
+        padding: 20px;
+      }
+
+      .section-head h2 { font-size: 28px; }
+      h1 { font-size: 34px; }
+      .lead { font-size: 16px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <header class="hero">
+      <span class="eyebrow">AI Topic Selection · 选题三</span><a class="back-link" href="./index.html">返回总入口</a>
+      <div class="hero-grid">
+        <div>
+          <h1>中转站会偷走你的缓存命中吗？我在 Claude Code 成本实验里看到的真相</h1>
+          <p>
+            这个选题想抓住一个很具体、但经常被忽略的问题：大家看 Claude Code 成本时，往往盯着模型单价，
+            但在长上下文、Agent、多轮代码协作场景里，真正拉开成本差距的，常常是缓存命中有没有被保住。
+            一旦中转站、兼容层、国产模型接入链路没处理好，账单就会立刻变难看。
+          </p>
+          <div class="quote">
+            这篇文章真正想讨论的，不是“哪个模型更便宜”，而是“哪条链路能把缓存活下来”。
+          </div>
+        </div>
+        <div class="hero-stat-wrap">
+          <div class="hero-stat">
+            <strong>一句话判断</strong>
+            <span>Agent 场景里，缓存命中率往往比模型标价更决定真实成本。</span>
+          </div>
+          <div class="hero-stat">
+            <strong>为什么现在写</strong>
+            <span>越来越多人用 Token 中转站、OpenRouter、Anthropic-compatible 网关和国产模型来承接 Claude Code 工作流。</span>
+          </div>
+          <div class="hero-stat">
+            <strong>核心张力</strong>
+            <span>同样任务、同样模型能力，过一道中转层后，缓存语义和路由策略就可能把成本直接拉开。</span>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <div class="layout">
+      <aside class="panel">
+        <h2>目录</h2>
+        <nav class="toc">
+          <a href="#why">为什么选这个题</a>
+          <a href="#angles">这个题想讲什么</a>
+          <a href="#sources">参考来源</a>
+        </nav>
+        <div class="panel-note">
+          这页主要回答三件事：为什么这个题值得写，这个题的判断框架是什么，我准备用哪些来源把结论钉住。
+        </div>
+      </aside>
+
+      <main class="main">
+        <section class="section" id="why">
+          <div class="section-head">
+            <h2>为什么选这个题</h2>
+            <span class="meta">Topic Rationale</span>
+          </div>
+          <p class="lead">
+            我想选这个题，是因为缓存命中对 Token 成本的影响非常直接，而且这不是一个抽象优化点，而是很多真实用户已经踩到的坑。
+          </p>
+          <p>
+            Claude Code 这类长上下文、重工具调用、多轮协作的 coding workflow，本来就天然依赖 prompt caching。
+            如果缓存稳定命中，同样一段 system prompt、工具列表、仓库上下文，不需要每轮全价重算。
+            但一旦接入 Token 中转站、Anthropic-compatible 网关、OpenRouter，或者把国产模型挂进这条链路，中间任何一层的改写、路由、fallback，
+            都可能让缓存命中率掉下来。
+          </p>
+          <p>
+            这也是我觉得这个题有意思的地方。表面上大家都在比“模型便不便宜”，但真正影响账单的，可能不是模型本身，而是链路有没有把缓存保住。
+            这个角度既够新，也够具体，而且很适合做第一人称实验和实测复盘。
+          </p>
+          <div class="grid-3">
+            <article class="card">
+              <h3>真问题，不是概念题</h3>
+              <p>缓存命中率会直接影响 `cache_read_input_tokens`、`cached_tokens` 这类计费相关字段，最终体现到真实成本里。</p>
+              <div class="tag-wrap">
+                <span class="tag t-accent">成本敏感</span>
+                <span class="tag t-gold">可量化</span>
+              </div>
+            </article>
+            <article class="card">
+              <h3>有现实讨论热度</h3>
+              <p>现在很多开发者已经在用中转站和国产模型承接 Claude Code 风格工作流，公开 issue 里也出现了大量缓存相关反馈。</p>
+              <div class="tag-wrap">
+                <span class="tag t-teal">真实反馈</span>
+                <span class="tag t-gold">现在值得聊</span>
+              </div>
+            </article>
+            <article class="card">
+              <h3>能做实操，不会空</h3>
+              <p>这个题可以直接落到实验：直连 Claude、走中转站、接国产模型，比较缓存命中和总账单差异。</p>
+              <div class="tag-wrap">
+                <span class="tag t-accent">可实验</span>
+                <span class="tag t-teal">第一人称</span>
+              </div>
+            </article>
+          </div>
+        </section>
+
+        <section class="section" id="angles">
+          <div class="section-head">
+            <h2>这个题想讲什么</h2>
+            <span class="meta">Angle</span>
+          </div>
+          <p>
+            这篇文章不打算写成“某家中转站测评”，也不想写成“国产模型行不行”的口水文。
+            我更想把问题拆成一条完整链路：Claude Code 的缓存假设是什么，中转层会在哪些地方破坏这个假设，国产模型接入后又会把哪些差异放大。
+          </p>
+          <div class="grid-2">
+            <div class="story">
+              <strong>链路一：中转站为什么会影响缓存</strong>
+              中转站不只是透明转发。它可能改写请求结构、重排 provider、触发 fallback，也可能没有正确透传 `cache_control` 或 Anthropic 风格缓存字段。
+            </div>
+            <div class="story">
+              <strong>链路二：国产模型接入为什么会让问题更明显</strong>
+              国产模型自身不一定没有缓存能力，但如果它是通过兼容层挂进 Claude Code，这条链路就不再只看模型，还要看 Anthropic 兼容实现和网关语义对齐程度。
+            </div>
+            <div class="story">
+              <strong>链路三：为什么成本差距会被放大</strong>
+              在 Agent / coding 场景里，system、tools、仓库上下文往往很长。命中一次和重算一次，费用差距会快速累积，尤其是在多轮会话里。
+            </div>
+            <div class="story">
+              <strong>链路四：这题怎么落成文章</strong>
+              我会把它写成一篇成本实验和公开证据交叉验证的文章：官方机制解释 + GitHub issue + 真实配置差异 + 我自己的实测。</div>
+          </div>
+          <div class="quote">
+            这题最值得聊的地方，不是“某家更便宜”，而是“Anthropic-compatible 不等于 Claude Code 成本兼容”。
+          </div>
+        </section>
+
+        <section class="section" id="sources">
+          <div class="section-head">
+            <h2>参考来源</h2>
+            <span class="meta">Sources</span>
+          </div>
+          <p>
+            来源我会围绕三类来组织：官方缓存机制、真实用户反馈、国产模型或兼容层自己的缓存文档。这样文章不会只有推测，也不会只靠单点社区吐槽。
+          </p>
+          <div class="source-list">
+            <div class="source-item">
+              <strong>Anthropic / Claude Code Prompt Caching</strong>
+              用来解释 Claude Code 对缓存的依赖、前缀精确匹配规则，以及为什么 gateway 会影响缓存是否生效。
+              <div><a href="https://code.claude.com/docs/en/prompt-caching" target="_blank" rel="noreferrer">https://code.claude.com/docs/en/prompt-caching</a></div>
+            </div>
+            <div class="source-item">
+              <strong>OpenRouter Prompt Caching / Provider Routing</strong>
+              用来支撑“中转层的 sticky routing、fallback 和 provider-local cache 会影响命中率”这个判断。
+              <div><a href="https://openrouter.ai/docs/guides/best-practices/prompt-caching" target="_blank" rel="noreferrer">https://openrouter.ai/docs/guides/best-practices/prompt-caching</a></div>
+              <div><a href="https://openrouter.ai/docs/features/provider-routing" target="_blank" rel="noreferrer">https://openrouter.ai/docs/features/provider-routing</a></div>
+            </div>
+            <div class="source-item">
+              <strong>真实用户反馈：GitHub issues</strong>
+              这一组来源用来证明“中转站会把缓存搞差”不是猜想，而是已经有人在真实工作流里遇到过。
+              <ul>
+                <li><a href="https://github.com/microsoft/vscode/issues/312939" target="_blank" rel="noreferrer">microsoft/vscode issue #312939</a>：OpenRouter BYOK 下 `cached_tokens` 为 0，成本显著上升。</li>
+                <li><a href="https://github.com/anomalyco/opencode/issues/1245" target="_blank" rel="noreferrer">anomalyco/opencode issue #1245</a>：OpenRouter 似乎只缓存一部分前缀，长会话成本比 Anthropic 高很多。</li>
+                <li><a href="https://github.com/cline/cline/issues/10596" target="_blank" rel="noreferrer">cline/cline issue #10596</a>：provider 不 sticky，导致缓存跨 provider 失效。</li>
+                <li><a href="https://github.com/aaif-goose/goose/issues/3333" target="_blank" rel="noreferrer">aaif-goose/goose issue #3333</a>：要求补上 Claude 模型的 `cache_control` 支持。</li>
+              </ul>
+            </div>
+            <div class="source-item">
+              <strong>国产模型/兼容层缓存文档</strong>
+              这类来源用来避免文章滑向“国产模型天生缓存差”的粗暴判断，而是把问题放回链路和兼容实现上。
+              <ul>
+                <li><a href="https://api-docs.deepseek.com/guides/kv_cache" target="_blank" rel="noreferrer">DeepSeek Context Caching</a></li>
+                <li><a href="https://help.aliyun.com/zh/model-studio/context-cache" target="_blank" rel="noreferrer">阿里云百炼 Context Cache</a></li>
+                <li><a href="https://platform.minimax.io/docs/api-reference/anthropic-api-compatible-cache" target="_blank" rel="noreferrer">MiniMax Anthropic Explicit Prompt Caching</a></li>
+              </ul>
+            </div>
+            <div class="source-item">
+              <strong>仓库入口</strong>
+              选题会放在这个 GitHub Pages 仓库里统一展示。
+              <div><a href="https://github.com/lucianwhy/Topic-Selection" target="_blank" rel="noreferrer">https://github.com/lucianwhy/Topic-Selection</a></div>
+            </div>
+          </div>
+          <div class="footer">
+            这个选题最适合继续往下做成一篇实测文章：同一任务，比较 Claude 直连、中转站、国产模型接入三条链路的缓存命中、Token 使用和总账单差异。
+          </div>
+        </section>
+      </main>
+    </div>
+  </div>
+</body>
+</html>

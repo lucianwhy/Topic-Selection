@@ -83,6 +83,25 @@
       font-weight: 700;
     }
 
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      margin-left: 12px;
+      padding: 8px 12px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.76);
+      color: var(--teal);
+      font-size: 12px;
+      letter-spacing: 0.04em;
+      font-weight: 700;
+    }
+
+    .back-link:hover {
+      text-decoration: none;
+      background: rgba(36, 88, 109, 0.12);
+    }
+
     .hero-grid {
       display: grid;
       grid-template-columns: 1.45fr 0.9fr;
@@ -301,7 +320,7 @@
 <body>
   <div class="shell">
     <section class="hero">
-      <span class="eyebrow">AI Topic Selection · 选题一</span>
+      <span class="eyebrow">AI Topic Selection · 选题一</span><a class="back-link" href="./index.html">返回总入口</a>
       <div class="hero-grid">
         <div>
           <h1>我给 Agent 钱包之后，最可怕的不是它会花钱</h1>
