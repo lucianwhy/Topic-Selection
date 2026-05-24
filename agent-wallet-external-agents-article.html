@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>我给 Agent 钱包之后，最可怕的不是它会花钱</title>
+  <style>
+    :root {
+      --bg: #f7f2ea;
+      --paper: #fffdfa;
+      --ink: #1f1a17;
+      --muted: #655e57;
+      --line: rgba(76, 59, 46, 0.12);
+      --accent: #b6502d;
+      --teal: #24586d;
+      --shadow: 0 20px 50px rgba(37, 28, 22, 0.08);
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      color: var(--ink);
+      font-family: "PingFang SC", "Microsoft YaHei", "Segoe UI", sans-serif;
+      line-height: 1.9;
+      background:
+        radial-gradient(circle at top right, rgba(182, 80, 45, 0.11), transparent 28%),
+        radial-gradient(circle at left 22%, rgba(36, 88, 109, 0.09), transparent 22%),
+        linear-gradient(180deg, #f7f2ea 0%, #f4efe6 48%, #efe7db 100%);
+    }
+    a { color: var(--teal); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    .shell {
+      width: min(880px, calc(100% - 32px));
+      margin: 32px auto 60px;
+    }
+    .hero,
+    .article {
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: 28px;
+      box-shadow: var(--shadow);
+    }
+    .hero {
+      padding: 36px 36px 30px;
+      margin-bottom: 22px;
+      background:
+        linear-gradient(135deg, rgba(182, 80, 45, 0.12), rgba(36, 88, 109, 0.08)),
+        var(--paper);
+    }
+    .eyebrow {
+      display: inline-block;
+      margin-bottom: 14px;
+      padding: 8px 12px;
+      border-radius: 999px;
+      background: rgba(182, 80, 45, 0.1);
+      color: var(--accent);
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+    h1 {
+      margin: 0 0 14px;
+      font-size: clamp(32px, 5vw, 56px);
+      line-height: 1.08;
+      font-family: "Source Han Serif SC", "Noto Serif SC", "Songti SC", serif;
+    }
+    .hero p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 17px;
+      max-width: 46em;
+    }
+    .article {
+      padding: 34px 36px 40px;
+    }
+    p {
+      margin: 0 0 16px;
+      font-size: 18px;
+    }
+    .image-note,
+    .report-note {
+      margin: 22px 0;
+      padding: 16px 18px;
+      border-radius: 18px;
+      background: rgba(36, 88, 109, 0.08);
+      color: var(--muted);
+      font-size: 15px;
+    }
+    .quote {
+      margin: 22px 0;
+      padding: 18px 18px 18px 20px;
+      border-left: 4px solid var(--accent);
+      border-radius: 18px;
+      background: rgba(182, 80, 45, 0.08);
+      font-size: 18px;
+      font-weight: 700;
+    }
+    .nav {
+      margin-top: 18px;
+      color: var(--muted);
+      font-size: 14px;
+    }
+    @media (max-width: 720px) {
+      .hero, .article { padding: 24px; }
+      p { font-size: 17px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <section class="hero">
+      <span class="eyebrow">原文 / Article Draft</span>
+      <h1>我给 Agent 钱包之后，最可怕的不是它会花钱</h1>
+      <p>
+        这是选题一对应的正文原文版本。它从 Codex 跑横纵分析报告时的真实痛点切进去，
+        落到“主 Agent 带着钱包，通过 x402 去调用外部模型和外部 Agent”这条实验链路上。
+      </p>
+      <div class="nav">
+        <a href="./agent-wallet-external-agents.html">返回选题页</a>
+      </div>
+    </section>
+
+    <article class="article">
+      <p>前几天，我给 Codex 配了一个钱包。</p>
+      <p>不是为了整活。</p>
+      <p>也不是为了演示一个听起来很酷的 Agent 支付概念。</p>
+      <p>原因很简单，我碰到了一个很具体的场景。</p>
+      <p>我当时在让它跑一份横纵分析报告。</p>
+      <p>这种活你如果认真做过就知道，不轻。</p>
+      <p>不是把几段资料丢给模型，让它总结一下就完了。</p>
+      <p>你得拆纵向，拆横向，补材料，做比较，最后还得把一堆散的东西，落成一份真的能看的报告。</p>
+
+      <p>我把整个 Skill 交给 Codex 去跑，看着它开始往外派子 Agent，去做不同角度的分析。</p>
+      <p>看到这里的时候，我脑子里突然冒出来一个问题。</p>
+      <p><strong>它既然都已经会拆任务、会派子 Agent 了，那它能不能再往前一步，真的去买外面的能力？</strong></p>
+
+      <p>再说直白一点。</p>
+      <p>不同任务，本来就该分给不同的脑子。</p>
+      <p>有些模型擅长整理材料。</p>
+      <p>有些模型擅长做结构。</p>
+      <p>有些模型适合长叙事。</p>
+      <p>有些模型适合拉比较。</p>
+      <p>人类团队都讲术业有专攻，大模型之间，凭什么不能也这样分工。</p>
+
+      <p><strong>问题其实不在会不会分工。</strong></p>
+      <p>Codex 早就会分工了。</p>
+      <p><strong>问题在于，它派出去的那些子 Agent，本质上还是同一套体系里的自己人。</strong></p>
+      <p>表面上看，像很多 Agent 在并行干活。</p>
+      <p>但底下真正烧掉的，还是同一份 Token 账单。</p>
+      <p>也就是说，它确实已经会调度了。</p>
+      <p>可它调度出去的，依然还是自己这套系统内部的能力。</p>
+
+      <p>这一下我就更好奇了。</p>
+      <p><strong>如果它已经知道哪个任务适合什么模型，那为什么不干脆给它一个钱包，让它自己去买对应的服务，自己去调用外面的模型能力？</strong></p>
+
+      <p>这个念头一冒出来，后面就很顺了。</p>
+      <p>说干就干。</p>
+      <p>我在本地给它配了钱包，把调用能力封成 CLI，又把整套流程打包成了一个 Skill。</p>
+      <div class="image-note">这里可插入：本地钱包配置 / Skill 打包过程截图。</div>
+
+      <p>再往前一步，我让它通过 x402 这条路，真的去调用别的模型。</p>
+      <p>不是概念上的如果可以。</p>
+      <p>不是嘴上的理论上能行。</p>
+      <p>是真的付钱，真的按量买能力，真的把任务发出去。</p>
+
+      <p>这次实际跑的时候，底层接的是 Blockrun 提供的模型聚合服务。</p>
+      <p>它通过 x402 协议，实际调用了 <code>claude-sonnet-4.6</code>、<code>gpt-5.5</code>、<code>gemini-3.1-pro</code>，去分段完成一份以 Agent 支付为主题的横纵分析报告。</p>
+      <div class="image-note">这里可插入：ai-pay 调用成功截图、交易哈希截图、子 Agent 返回结果截图。</div>
+
+      <p>说真的，看到请求成功那个瞬间，我是有点愣住的。</p>
+      <p><strong>因为我突然发现，这件事最可怕的地方，根本不是 Agent 终于会花钱了。</strong></p>
+      <p><strong>而是它第一次开始有了对外调度能力。</strong></p>
+
+      <p>以前你看一个 Agent，更多还是工具视角。</p>
+      <p>它会不会写。</p>
+      <p>它会不会搜。</p>
+      <p>它会不会调工具。</p>
+      <p>它会不会把一件事做到八九十分。</p>
+
+      <p>但现在不一样了。</p>
+      <p>它开始可以判断，这个任务是不是该交给另一个模型去做。</p>
+      <p>它开始可以判断，这一步值不值得花钱。</p>
+      <p>它开始可以真的把预算换成外部能力。</p>
+      <p><strong>这就已经不是简单的模型调用了。</strong></p>
+      <p><strong>这已经有点像一个带预算的主 Agent，在调度自己的外部团队了。</strong></p>
+
+      <p>我后来越想越觉得，钱包这件事，补上的不是一个支付按钮。</p>
+      <p><strong>它补上的更像是 Agent 以前没有的一块器官。</strong></p>
+      <p>以前它会想，会写，会拆任务。</p>
+      <p>但它不会真正意义上地把活包出去。</p>
+      <p>现在它开始会了。</p>
+      <p>这一下，味道就完全变了。</p>
+
+      <p>你顺着这个口子再往下想，会发现这事根本不止一次模型调用实验。</p>
+      <p><strong>如果 Agent 真有钱包，它未来能做的事会非常多。</strong></p>
+      <p>它可以去调别的模型。</p>
+      <p>可以去调别的 Agent。</p>
+      <p>可以去买外部服务。</p>
+      <p>可以在预算范围内，自己决定哪一部分该自己做，哪一部分该外包出去。</p>
+      <p>再往后一点，Agent 和 Agent 之间甚至会真的开始发生价值交换。</p>
+      <p>以前我们默认，价值交换只发生在人和人之间。</p>
+      <p>以后很可能不是了。</p>
+      <p>机器和机器之间，也会开始长出一套自己的交易关系。</p>
+
+      <p><strong>x402 这种东西，第一次让我觉得，这条路不是空想。</strong></p>
+      <p>它当然不是唯一答案。</p>
+      <p>以后一定还会有别的协议，别的平台，别的支付轨道。</p>
+      <p>但至少它让我看见了一件事。</p>
+      <p>机器之间的支付，不再只是一个概念了。</p>
+
+      <p>最后那份报告我也打包成了 HTML 放到了 GitHub Pages 上。</p>
+      <div class="report-note">
+        研究报告链接：
+        <a href="https://lucianwhy.github.io/hv-reports/agent-pay/" target="_blank" rel="noopener noreferrer">Agent 支付研究报告</a>
+      </div>
+
+      <p>整体跑下来之后，体验确实非常新鲜。</p>
+      <p>但我也得说实话。</p>
+      <p>现在这套东西还远远谈不上成熟。</p>
+      <p>Agent 相互调用做出来的报告，效果也还不是非常稳定。</p>
+      <p><strong>Agent 支付这件事，底下还有太多问题没打通。</strong></p>
+      <p>而且这些问题，不是零碎的小毛病。</p>
+      <p>它们几乎就是这条路现在为什么还推不开的核心原因。</p>
+
+      <p>最先没打通的，是授权。</p>
+      <p>Agent 到底凭什么代表你花钱。</p>
+      <p>这个授权是一次性的，还是长期有效的。</p>
+      <p>是按任务给，按金额给，还是按时间窗口给。</p>
+      <p>是我授权主 Agent，再由主 Agent 往下分发，还是每一个外部 Agent 都得重新拿到确认。</p>
+      <p>这些问题今天都没有真正统一的答案。</p>
+
+      <p>第二个没打通的，是责任。</p>
+      <p>钱一旦花出去，出了错到底算谁的。</p>
+      <p>算主 Agent 判断错了。</p>
+      <p>算被调用的子 Agent 没把活接住。</p>
+      <p>算支付轨道放行得太轻。</p>
+      <p>还是算用户自己一开始就给了过宽的权限。</p>
+      <p><strong>你会发现，Agent 支付最麻烦的地方，从来不只是怎么付，而是出了问题之后谁来担责。</strong></p>
+
+      <p>第三个没打通的，是预算治理。</p>
+      <p>今天大家一说 Agent 花钱，第一反应通常还是它能不能付。</p>
+      <p>但企业真正担心的，往往不是它付不出去，而是它会不会在并发任务里一起把预算打穿。</p>
+      <p>一个 Agent 调三个子 Agent，三个子 Agent 再各自去买外部能力。</p>
+      <p>这种结构一旦跑起来，限额、频控、预算切分、失败重试、重复扣费，都会立刻变成真实问题。</p>
+
+      <p>第四个没打通的，是任务交接。</p>
+      <p>人和人协作的时候，付钱不代表事情做完，最多代表合作开始。</p>
+      <p>Agent 和 Agent 之间也一样。</p>
+      <p>钱付出去了，不代表另一个 Agent 就真的理解了你的任务目标、上下文、验收标准和结果格式。</p>
+      <p>如果这些东西交不清楚，那 Agent 支付最后很容易退化成一种很贵的错误外包。</p>
+
+      <p>第五个没打通的，是商户和服务基础设施。</p>
+      <p>今天大部分支付系统，本来就不是为 Agent 设计的。</p>
+      <p>它们是为人设计的。</p>
+      <p>默认你会登录，会看页面，会填表单，会点确认，会处理售后。</p>
+      <p>可 Agent 世界需要的是另一套东西。</p>
+      <p>机器可读的商品信息。</p>
+      <p>机器可验证的授权凭证。</p>
+      <p>机器可执行的结算接口。</p>
+      <p>机器可回放的操作日志。</p>
+      <p>这不是多接一个支付按钮就能补上的。</p>
+
+      <p>第六个没打通的，是争议和售后闭环。</p>
+      <p>如果 Agent 买错了。</p>
+      <p>买重了。</p>
+      <p>买完之后服务没交付。</p>
+      <p>或者外部模型返回的结果根本不符合要求。</p>
+      <p>那这笔钱怎么算。</p>
+      <p>能不能退。</p>
+      <p>谁来判定这次调用到底算成功还是失败。</p>
+      <p>这些都不是一句它能付款了就能解决的。</p>
+
+      <p>所以我现在看这件事，心态其实挺复杂的。</p>
+      <p>一边是真的兴奋。</p>
+      <p>因为我觉得，这个方向一旦成立，后面的场景会非常大。</p>
+      <p>另一边我也很清楚，它现在还很早，很粗糙，很像一个极客项目。</p>
+      <p>但也正因为这样，它才值得盯着看。</p>
+      <p>因为很多真正大的变化，一开始都不成熟。</p>
+      <p>都很简陋。</p>
+      <p>都像玩具。</p>
+      <p>然后慢慢长成基础设施。</p>
+
+      <p>现在其实已经能看到很多大公司在往这条路上修了。</p>
+      <p>不只是加密圈的人在做。</p>
+      <p>Google 在开发者大会和支付协议这条线上，已经很明确地把 Agent 支付当成要认真做的方向了。</p>
+      <p>传统支付公司像 Visa、Mastercard 这种，也明显不想错过这一波。</p>
+      <div class="image-note">这里可插入：Google、Visa、Mastercard、x402 的行业拼图截图。</div>
+
+      <p>这说明什么。</p>
+      <p><strong>说明 Agent 支付已经不是会不会有的问题了。</strong></p>
+      <p><strong>更像是它最后会长成什么样的问题。</strong></p>
+      <p><strong>而我这次最真实的感受就是，Agent 一旦有了钱包，最值得警惕，也最值得兴奋的，不是它终于会花钱了。</strong></p>
+      <p><strong>是它第一次开始像一个真正的执行者那样，把预算变成能力，把能力变成结果。</strong></p>
+      <div class="quote">这才是我觉得最可怕的地方。</div>
+    </article>
+  </div>
+</body>
+</html>
